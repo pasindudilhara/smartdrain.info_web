@@ -1,0 +1,4 @@
+import type { ReactNode } from "react"
+import { Card } from "./ui/card"
+export function PageHeader({title,description,action}:{title:string;description?:string;action?:ReactNode}){return <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><h1 className="text-2xl font-bold tracking-tight text-slate-950">{title}</h1>{description&&<p className="mt-1 text-sm text-slate-500">{description}</p>}</div>{action}</div>}
+export function Kpi({label,value,sub,icon}:{label:string;value:ReactNode;sub?:string;icon?:ReactNode}){return <Card className="p-5"><div className="flex items-start justify-between"><div><p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</p><div className="mt-2 text-2xl font-bold text-slate-950">{value}</div>{sub&&<p className="mt-1 text-xs text-slate-500">{sub}</p>}</div>{icon&&<div className="rounded-xl bg-emerald-50 p-2.5 text-emerald-700">{icon}</div>}</div></Card>}

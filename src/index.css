@@ -1,0 +1,149 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17211b;
+  background: #f5f8f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background:
+  radial-gradient(circle at 15% -10%, rgba(46,125,82,.10), transparent 34rem),
+  #f5f8f6; }
+button, input, select, textarea { font: inherit; }
+.leaflet-container { font-family: inherit; }
+.leaflet-control-attribution { font-size: 9px !important; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #cbd8cf; border-radius: 99px; }
+.metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+@media(max-width:1100px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:640px){.metric-grid{grid-template-columns:1fr;}}
+
+/* Public full-screen map */
+.smartdrain-marker-shell { background: transparent !important; border: 0 !important; }
+.smartdrain-marker {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  transition: transform .18s ease;
+}
+.smartdrain-marker.is-selected { width: 42px; height: 42px; transform: scale(1.06); }
+.smartdrain-marker-core {
+  position: relative;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: white;
+  background: var(--marker-color);
+  border: 2px solid rgba(255,255,255,.95);
+  box-shadow: 0 8px 20px rgba(15,23,42,.24), 0 1px 4px rgba(15,23,42,.25);
+}
+.smartdrain-marker.is-selected .smartdrain-marker-core { width: 32px; height: 32px; border-radius: 13px; }
+.smartdrain-marker-pulse {
+  position: absolute;
+  inset: 2px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--marker-color) 26%, transparent);
+  animation: smartdrain-pulse 2.6s ease-out infinite;
+}
+.smartdrain-marker-drain { font-size: 16px; line-height: 1; font-weight: 900; transform: translateY(-1px); }
+.smartdrain-marker-bin { font-size: 11px; line-height: 1; font-weight: 900; }
+@keyframes smartdrain-pulse { 0%,45% { transform: scale(.78); opacity:.65; } 100% { transform: scale(1.55); opacity:0; } }
+
+.leaflet-popup-content-wrapper {
+  border-radius: 18px !important;
+  box-shadow: 0 18px 48px rgba(15,23,42,.18) !important;
+}
+.leaflet-popup-content { margin: 0 !important; min-width: 260px; }
+.leaflet-popup-tip { box-shadow: none !important; }
+.smartdrain-map-popup { padding: 15px; color:#0f172a; font-family:inherit; }
+.smartdrain-popup-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.smartdrain-popup-head strong { display:block; font-size:14px; line-height:1.2; }
+.smartdrain-popup-head span { display:block; margin-top:4px; font-size:11px; color:#64748b; }
+.smartdrain-popup-head em { font-style:normal; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.smartdrain-popup-meta { margin-top:10px; padding-top:9px; border-top:1px solid #e2e8f0; font-size:10px; color:#64748b; }
+.smartdrain-popup-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin-top:10px; }
+.smartdrain-popup-grid span { border-radius:10px; background:#f8fafc; padding:8px; }
+.smartdrain-popup-grid small { display:block; font-size:9px; color:#94a3b8; }
+.smartdrain-popup-grid b { display:block; margin-top:3px; font-size:11px; }
+
+.leaflet-control-zoom { border: 0 !important; box-shadow: 0 10px 28px rgba(15,23,42,.16) !important; }
+.leaflet-control-zoom a { border:0 !important; color:#334155 !important; }
+.leaflet-control-zoom-in { border-radius:13px 13px 0 0 !important; }
+.leaflet-control-zoom-out { border-radius:0 0 13px 13px !important; }
+.leaflet-control-attribution { border-radius:10px 0 0 0; background:rgba(255,255,255,.84) !important; backdrop-filter:blur(8px); }
+
+/* ── Report page layout ── */
+.report-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .report-layout { grid-template-columns: 1fr; }
+}
+
+.report-config { min-width: 0; }
+
+.report-preview {
+  min-width: 0;
+  min-height: 500px;
+}
+
+.report-paper {
+  background: #fff;
+  border: 1px solid rgba(226,232,240,.8);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 24px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.04);
+}
+
+.report-header {
+  margin-bottom: 1.5rem;
+}
+
+/* ── Print / PDF styles ── */
+@media print {
+  /* Hide everything except the report */
+  body { background: #fff !important; }
+  aside, header, .no-print,
+  .report-config,
+  nav,
+  .lg\:pl-60 > header,
+  .lg\:hidden { display: none !important; }
+
+  .lg\:pl-60 { padding-left: 0 !important; }
+
+  .report-layout {
+    display: block !important;
+  }
+
+  .report-paper {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  .report-preview {
+    min-height: auto !important;
+  }
+
+  /* Ensure charts print well */
+  .recharts-wrapper { page-break-inside: avoid; }
+
+  /* Page margins */
+  @page {
+    margin: 1.5cm 1.8cm;
+    size: A4;
+  }
+}
+
